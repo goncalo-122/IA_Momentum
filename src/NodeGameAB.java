@@ -1,4 +1,3 @@
-package upt.jt.ia;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -12,7 +11,7 @@ public abstract class NodeGameAB {
     public static int VICTORY = 1000000;
     public static int DEFEAT = -1000000;
 
-    private upt.jt.ia.Move bestMove = null;
+    private Move bestMove = null;
     private static Date startTime;
 
     private int depth;
@@ -23,7 +22,7 @@ public abstract class NodeGameAB {
 
 //    public abstract String getMove();
     
-    public abstract ArrayList<upt.jt.ia.Move> expandAB();
+    public abstract ArrayList<Move> expandAB();
 
     public abstract double getH();
 
@@ -31,7 +30,7 @@ public abstract class NodeGameAB {
         return maxDepth;
     }
 
-    public upt.jt.ia.Move getBestMove() {
+    public Move getBestMove() {
         return bestMove;
     }
 

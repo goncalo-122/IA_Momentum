@@ -1,8 +1,6 @@
-package upt.jt.ia;
-
 import java.util.ArrayList;
 
-public class GameMomentumAB extends upt.jt.ia.NodeGameAB {
+public class GameMomentumAB extends NodeGameAB {
 
 	private int[][] board = new int[7][7];
 	private int myColor;
@@ -33,8 +31,8 @@ public class GameMomentumAB extends upt.jt.ia.NodeGameAB {
 				}
 	}
 
-	public ArrayList<upt.jt.ia.Move> expandAB() {
-		ArrayList<upt.jt.ia.Move> suc = new ArrayList<upt.jt.ia.Move>();
+	public ArrayList<Move> expandAB() {
+		ArrayList<Move> suc = new ArrayList<Move>();
 		// TODO
 		return suc;
 	}
@@ -74,8 +72,8 @@ public class GameMomentumAB extends upt.jt.ia.NodeGameAB {
 		GameMomentumAB jogo = new GameMomentumAB("0 0 0 0 0 0 0 " + "0 0 1 0 0 0 0 " + "0 0 1 0 0 0 0 "
 				+ "0 0 0 2 2 2 2 " + "0 0 0 0 0 0 0 " + "0 0 0 0 0 0 0 " + "0 0 0 0 0 0 0 ");
 		jogo.setMyColor(1);
-		ArrayList<upt.jt.ia.Move> suc = jogo.expandAB();
-		for (upt.jt.ia.Move j : suc)
+		ArrayList<Move> suc = jogo.expandAB();
+		for (Move j : suc)
 			System.out.println(j);
 	}
 

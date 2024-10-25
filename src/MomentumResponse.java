@@ -1,5 +1,3 @@
-package upt.jt.ia;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -118,12 +116,12 @@ public class MomentumResponse implements Runnable {
                         System.out.println("readLine "+st);  // for debugging
                         if (st.length() < 4) { // short line: it is the player's number
                             jplayer.setText( st);
-                            upt.jt.ia.NodeGameAB.setPlayer( st);
+                            NodeGameAB.setPlayer( st);
                             continue;   // restarts while loop
                         }
                         jt.setBackground(Color.yellow); // yellow: it's my turn to make a move
                         jt.setEnabled(true);
-                        upt.jt.ia.GameMomentumAB initial = new upt.jt.ia.GameMomentumAB( st);
+                        GameMomentumAB initial = new GameMomentumAB( st);
                         String res = initial.processAB( jc);	// the player's move
                         jt.setText( res);
                         System.out.println(initial.toString());	// for debugging
