@@ -31,17 +31,39 @@ public class GameMomentumAB extends NodeGameAB {
 				}
 	}
 
+	@Override
 	public ArrayList<Move> expandAB() {
-		ArrayList<Move> suc = new ArrayList<Move>();
-		// TODO
+		ArrayList<Move> suc = new ArrayList<>();
+		// Generate all possible moves based on the current board state.
+		for (int l = 0; l < 7; l++) {
+			for (int c = 0; c < 7; c++) {
+				// Check if the cell is empty (represented by 0)
+				if (board[l][c] == 0) {
+					// Create a new move
+					int[][] newBoard = makeCopy(board);
+					newBoard[l][c] = myColor; // Place the player's color
+					Move move = new Move("Move to (" + l + ", " + c + ")", new GameMomentumAB(newBoard, myColor, getDepth() + 1));
+					suc.add(move);
+				}
+			}
+		}
 		return suc;
 	}
 
+	@Override
 	public double getH() {
 		double h = 0;
-		// TODO
+
+		for (int l = 0; l < 7; l++) {
+			for (int c = 0; c < 7; c++) {
+				if (board[l][c] == myColor) {
+					h++;
+				}
+			}
+		}
 		return h;
 	}
+
 
 	private int[][] makeCopy(int[][] p) {
 		int[][] np = new int[7][7];
