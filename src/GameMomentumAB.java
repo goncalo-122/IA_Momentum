@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 
 public class GameMomentumAB extends NodeGameAB {
-
 	private int[][] board = new int[7][7];
 	private int myColor;
 
@@ -13,64 +12,59 @@ public class GameMomentumAB extends NodeGameAB {
 
 	public GameMomentumAB(int[][] p, int myColor, int depth) {
 		super(depth);
-		for (int l = 0; l < 7; l++)
-			for (int c = 0; c < 7; c++)
-				this.board[l][c] = p[l][c];
+		this.board = makeCopy(p);
 		this.myColor = myColor;
 	}
 
 	public void processNode(String node) {
 		String[] v = node.trim().split(" ");
-		for (int l = 0; l < 7; l++)
-			for (int c = 0; c < 7; c++)
-				try {
-					board[l][c] = Integer.parseInt(v[l * 7 + c]);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-					System.out.println("board " + v + "  l " + l + "  c " + c);
-				}
+		for (int l = 0; l < 7; l++) {
+			for (int c = 0; c < 7; c++) {
+				board[l][c] = Integer.parseInt(v[l * 7 + c]);
+			}
+		}
 	}
 
 	@Override
 	public ArrayList<Move> expandAB() {
-		ArrayList<Move> suc = new ArrayList<>();
-		// Generate all possible moves based on the current board state.
+		ArrayList<Move> moves = new ArrayList<>();
 		for (int l = 0; l < 7; l++) {
 			for (int c = 0; c < 7; c++) {
-				// Check if the cell is empty (represented by 0)
 				if (board[l][c] == 0) {
-					// Create a new move
 					int[][] newBoard = makeCopy(board);
-					newBoard[l][c] = myColor; // Place the player's color
+					newBoard[l][c] = myColor;
+
+					// Gerando o movimento
 					Move move = new Move("Move to (" + l + ", " + c + ")", new GameMomentumAB(newBoard, myColor, getDepth() + 1));
-					suc.add(move);
+
+					// Imprimir o pedido antes de enviar ao servidor
+					System.out.println("Pedido do jogador para o servidor: Move to (" + l + ", " + c + ")");
+
+					// Adiciona o movimento à lista
+					moves.add(move);
 				}
 			}
 		}
-		return suc;
+		return moves;
 	}
 
 	@Override
 	public double getH() {
 		double h = 0;
-
-		for (int l = 0; l < 7; l++) {
-			for (int c = 0; c < 7; c++) {
-				if (board[l][c] == myColor) {
-					h++;
-				}
+		for (int[] row : board) {
+			for (int cell : row) {
+				if (cell == myColor) h++;
 			}
 		}
 		return h;
 	}
 
-
-	private int[][] makeCopy(int[][] p) {
-		int[][] np = new int[7][7];
-		for (int l = 0; l < 7; l++)
-			for (int c = 0; c < 7; c++)
-				np[l][c] = p[l][c];
-		return np;
+	private int[][] makeCopy(int[][] original) {
+		int[][] copy = new int[7][7];
+		for (int l = 0; l < 7; l++) {
+			System.arraycopy(original[l], 0, copy[l], 0, 7);
+		}
+		return copy;
 	}
 
 	public void setMyColor(int color) {
@@ -78,25 +72,13 @@ public class GameMomentumAB extends NodeGameAB {
 	}
 
 	public String toString() {
-		String st = "";
-		for (int l = 0; l < 7; l++) {
-			for (int c = 0; c < 7; c++) {
-				st += " " + (board[l][c] == 0 ? "." : "" + (board[l][c]));
+		StringBuilder sb = new StringBuilder();
+		for (int[] row : board) {
+			for (int cell : row) {
+				sb.append(cell == 0 ? "." : cell).append(" ");
 			}
-			st += "\n";
+			sb.append("\n");
 		}
-		st += "\n";
-		return st;
+		return sb.toString();
 	}
-
-	// for testing
-	public static void main(String[] args) {
-		GameMomentumAB jogo = new GameMomentumAB("0 0 0 0 0 0 0 " + "0 0 1 0 0 0 0 " + "0 0 1 0 0 0 0 "
-				+ "0 0 0 2 2 2 2 " + "0 0 0 0 0 0 0 " + "0 0 0 0 0 0 0 " + "0 0 0 0 0 0 0 ");
-		jogo.setMyColor(1);
-		ArrayList<Move> suc = jogo.expandAB();
-		for (Move j : suc)
-			System.out.println(j);
-	}
-
 }

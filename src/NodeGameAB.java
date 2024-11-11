@@ -15,13 +15,13 @@ public abstract class NodeGameAB {
     private static Date startTime;
 
     private int depth;
-    
+
     public NodeGameAB( int depth) {
         this.depth = depth;
     }
 
 //    public abstract String getMove();
-    
+
     public abstract ArrayList<Move> expandAB();
 
     public abstract double getH();
@@ -37,7 +37,7 @@ public abstract class NodeGameAB {
     public int getDepth() {
         return depth;
     }
-    
+
     protected static void setPlayer( String st) {
         player = 0;
         try {
@@ -47,15 +47,15 @@ public abstract class NodeGameAB {
             ex.printStackTrace();
         }
     }
-    
+
     protected static int getPlayer() {
         return player;
     }
 
-    
+
 // --------------------------------------------------
 
-    
+
     public int getSeconds() {
         return (int)(new Date().getTime()-startTime.getTime())/1000;
     }
@@ -67,12 +67,12 @@ public abstract class NodeGameAB {
         maxDepth = 5;       // minimum...
         startTime = new Date();
         while (getSeconds() < LIMIT_TIME && maxDepth < 50 && largest < VICTORY) {
-        	Move bestOfDepth = null;
-        	largest = DEFEAT - 1;
+            Move bestOfDepth = null;
+            largest = DEFEAT - 1;
             for (Move candidate : suc) {
                 double vMin = candidate.getNode().minValue( -99999999, 99999999);
                 if (vMin > largest || (vMin == largest && maybe())) {
-                	largest = vMin;
+                    largest = vMin;
                     bestOfDepth = candidate;
                     if (tf != null)
                         tf.setText("Depth:"+maxDepth+"  "+getSeconds()+"s  "+largest+" : "+bestOfDepth.getAction());
@@ -82,20 +82,22 @@ public abstract class NodeGameAB {
             }
             maxDepth++;
             if (bestOfDepth != null) {
-            	bestMove = bestOfDepth;
+                bestMove = bestOfDepth;
                 if (tf != null)
-                   tf.setText("Depth:"+maxDepth+"  "+getSeconds()+"s  "+largest+" : "+bestMove.getAction());
+                    tf.setText("Depth:"+maxDepth+"  "+getSeconds()+"s  "+largest+" : "+bestMove.getAction());
                 else
-                   System.out.println("Depth:"+maxDepth+"  "+getSeconds()+"s  "+largest+" : "+bestMove.getAction());
+                    System.out.println("Depth:"+maxDepth+"  "+getSeconds()+"s  "+largest+" : "+bestMove.getAction());
             }
             tf.repaint();
         }
         if (bestMove != null)
-        	return bestMove.getAction();
+            return bestMove.getAction();
         else
-        	return "passo";
+            return "passo";
     }
-    
+
+
+
     public double maxValue( double alfa, double beta) {
         if (depth >= maxDepth || getSeconds() > LIMIT_TIME)
             return getH();
@@ -106,13 +108,13 @@ public abstract class NodeGameAB {
             double vMin = cand.getNode().minValue( alfa, beta);
             if (vMin > alfa) {
                 alfa = vMin;
-             }
+            }
             if (alfa >= beta)
                 return beta;
         }
         return alfa;
     }
-    
+
     public double minValue( double alfa, double beta) {
         if (depth >= maxDepth || getSeconds() > LIMIT_TIME)
             return getH();
@@ -123,15 +125,15 @@ public abstract class NodeGameAB {
             double vMax = cand.getNode().maxValue( alfa, beta);
             if (vMax < beta) {
                 beta = vMax;
-             }
+            }
             if (beta <= alfa)
                 return alfa;
         }
         return beta;
     }
-    
+
     private boolean maybe() {
-    	return Math.random() > 0.5;
+        return Math.random() > 0.5;
     }
 
 }
