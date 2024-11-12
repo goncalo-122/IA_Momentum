@@ -20,10 +20,18 @@ public class MomentumResponse {
     private JTextField jplayer;
     private JTextField jc;
 
+    private int currentPlayer = 1;
+
+
+    //Criar um método para fazer a validação da posição que o jogador coloca
+// Colocar o counting a simular o tempo de resposta
+// Um método para limpar os campos para a próxima jogada
+
+
     public MomentumResponse() {
         jf = new JFrame("UPT - IA - MomentumAB");
 
-        // Listener para o fechamento da janela
+
         jf.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 int res = confirmExit();
@@ -40,6 +48,7 @@ public class MomentumResponse {
         JPanel jnorth = new JPanel();
         jMainPanel.add(jnorth, BorderLayout.NORTH);
 
+        jnorth.add(new JLabel("Play: "));
         jt = new JTextField("    ", 24);
         jnorth.add(jt);
 
@@ -48,7 +57,7 @@ public class MomentumResponse {
         jnorth.add(jc);
 
         jnorth.add(new JLabel("Player: "));
-        jplayer = new JTextField("  ", 3);
+        jplayer = new JTextField(String.valueOf(currentPlayer), 3);
         jnorth.add(jplayer);
 
         JPanel jsouth = new JPanel();
@@ -58,10 +67,12 @@ public class MomentumResponse {
         JButton jend = new JButton("  Exit  ");
         jsouth.add(jend, BorderLayout.SOUTH);
 
-        // ActionListener para o botão OK
+
         jok.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                showServerMessage();  // Exibe a mensagem com os valores inseridos
+                showServerMessage();
+                togglePlayer();
+
             }
         });
 
@@ -77,28 +88,31 @@ public class MomentumResponse {
         jf.pack();
         jf.setVisible(true);
     }
+    public void updateCount(String count) {
+        jc.setText(count); // Atualiza o campo "Counting" com a contagem do servidor
+    }
 
     public void begin() {
         jc.setEnabled(false);
+        jplayer.setEnabled(false);
     }
 
     /**
      * Método para exibir a mensagem com os valores inseridos
      */
     private void showServerMessage() {
-        // Obter os valores inseridos pelo usuário
+
         String player = jplayer.getText();
         String count = jc.getText();
         String move = jt.getText();
 
-        // Criar a mensagem
         StringBuilder sb = new StringBuilder();
         sb.append("A seguinte informação será enviada ao servidor:\n");
         sb.append("Jogador: " + player + "\n");
         sb.append("Contagem: " + count + "\n");
         sb.append("Movimento: " + move + "\n");
 
-        // Mostrar a informação no console ou em uma caixa de diálogo
+
         System.out.println(sb.toString());
         JOptionPane.showMessageDialog(jf, sb.toString(), "Informações Enviadas", JOptionPane.INFORMATION_MESSAGE);
     }
@@ -117,6 +131,14 @@ public class MomentumResponse {
                 JOptionPane.WARNING_MESSAGE);
     }
 
+
+
+    private void togglePlayer() {
+        currentPlayer = (currentPlayer == 1) ? 2 : 1;
+        jplayer.setText(String.valueOf(currentPlayer));
+    }
+
+
     /**
      * Método principal
      */
@@ -127,4 +149,3 @@ public class MomentumResponse {
 }
 
 
-//o que é a contagem
