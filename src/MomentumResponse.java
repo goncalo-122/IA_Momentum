@@ -21,16 +21,11 @@ public class MomentumResponse {
     private JTextField jc;
 
     private int currentPlayer = 1;
-
-
-    //Criar um método para fazer a validação da posição que o jogador coloca
-// Colocar o counting a simular o tempo de resposta
-// Um método para limpar os campos para a próxima jogada
+    private int counting = 0;
 
 
     public MomentumResponse() {
         jf = new JFrame("UPT - IA - MomentumAB");
-
 
         jf.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -67,12 +62,12 @@ public class MomentumResponse {
         JButton jend = new JButton("  Exit  ");
         jsouth.add(jend, BorderLayout.SOUTH);
 
-
         jok.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                showServerMessage();
-                togglePlayer();
-
+                if (isValidMove(jt.getText())) {
+                    showServerMessage();
+                    togglePlayer();
+                }
             }
         });
 
@@ -88,14 +83,14 @@ public class MomentumResponse {
         jf.pack();
         jf.setVisible(true);
     }
-    public void updateCount(String count) {
-        jc.setText(count); // Atualiza o campo "Counting" com a contagem do servidor
-    }
+
 
     public void begin() {
         jc.setEnabled(false);
         jplayer.setEnabled(false);
     }
+
+
 
     /**
      * Método para exibir a mensagem com os valores inseridos
@@ -105,13 +100,12 @@ public class MomentumResponse {
         String player = jplayer.getText();
         String count = jc.getText();
         String move = jt.getText();
-
         StringBuilder sb = new StringBuilder();
         sb.append("A seguinte informação será enviada ao servidor:\n");
         sb.append("Jogador: " + player + "\n");
         sb.append("Contagem: " + count + "\n");
         sb.append("Movimento: " + move + "\n");
-
+        restart();
 
         System.out.println(sb.toString());
         JOptionPane.showMessageDialog(jf, sb.toString(), "Informações Enviadas", JOptionPane.INFORMATION_MESSAGE);
@@ -132,20 +126,47 @@ public class MomentumResponse {
     }
 
 
+    private void restart() {
+        jt.setText(" ");
+        jc.setText(" ");
+    }
+
 
     private void togglePlayer() {
+
         currentPlayer = (currentPlayer == 1) ? 2 : 1;
         jplayer.setText(String.valueOf(currentPlayer));
     }
 
 
-    /**
-     * Método principal
-     */
+    private boolean isValidMove(String move) {
+        // Validar o formato da jogada (ex: "1,1")
+        String[] parts = move.split(",");
+        if (parts.length != 2) {
+            JOptionPane.showMessageDialog(null, "Formato de jogada inválido. Use o formato 'linha,coluna'.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        try {
+            int row = Integer.parseInt(parts[0]) - 1;
+            int col = Integer.parseInt(parts[1]) - 1;
+
+            if (row < 0 || row >= 7 || col < 0 || col >= 7) {  // Verifica se está dentro dos limites do tabuleiro
+                JOptionPane.showMessageDialog(null, "Jogada fora dos limites do tabuleiro! O tabuleiro é 7x7.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+
+
+            return true;
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Jogada inválida. Insira números válidos.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+    }
+
+
     public static void main(String[] args) {
         MomentumResponse r = new MomentumResponse();
         r.begin();
     }
 }
-
-
