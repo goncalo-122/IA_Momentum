@@ -32,7 +32,7 @@ public class MomentumResponse implements Runnable {
     private JTextField jc;
     private BufferedReader in = null;		// for receiving data from the server
     private BufferedWriter out = null;		// for sending data to the server
-    
+
     public MomentumResponse() {
 
         jf = new JFrame("UPT - IA - MomentumAB");
@@ -78,7 +78,7 @@ public class MomentumResponse implements Runnable {
     }
 
     public void begin() {
-    
+
         run = true;
         jt.setEnabled(false);
         t = new Thread( this);
@@ -87,68 +87,68 @@ public class MomentumResponse implements Runnable {
 
 
     // thread runs at the same time as the rest of the program
-        public void run() {
+    public void run() {
+        try {
+            s = new Socket( SERVER_IP, port);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.out.println("Error opening socket");
+            System.exit(0);
+        }
+        try {
+            in = new BufferedReader( new InputStreamReader( s.getInputStream()));
+            out = new BufferedWriter( new OutputStreamWriter( s.getOutputStream()));
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            System.out.println("Error opening socket");
+            System.exit(0);
+        };
+        System.out.println("Start run");
+        // runs forever
+        while (run) {
+            String st = null;
             try {
-                s = new Socket( SERVER_IP, port);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                System.out.println("Error opening socket");
-                System.exit(0);
-            }
-            try {
-                in = new BufferedReader( new InputStreamReader( s.getInputStream()));
-                out = new BufferedWriter( new OutputStreamWriter( s.getOutputStream()));
+                if (in.ready()) {   // is there data to be read?
+                    jt.setText("");
+                    jc.setText("");
+                    st = in.readLine(); // reads a line of text: until it gets "\n")
+                    System.out.println("readLine "+st);  // for debugging
+                    if (st.length() < 4) { // short line: it is the player's number
+                        jplayer.setText( st);
+                        NodeGameAB.setPlayer( st);
+                        continue;   // restarts while loop
+                    }
+                    jt.setBackground(Color.yellow); // yellow: it's my turn to make a move
+                    jt.setEnabled(true);
+                    GameMomentumAB initial = new GameMomentumAB( st);
+                    String res = initial.processAB( jc);	// the player's move
+                    jt.setText( res);
+                    System.out.println(initial.toString());	// for debugging
+
+                    String str = jt.getText();
+                    try {
+                        out.write( str+"\n");   // sends the content of the text field to server
+                        out.flush();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        System.exit(0);
+                    }
+                    System.out.println("Sent move: "+str);
+                    jt.setBackground(Color.white);	// end of my turn
+                    jt.setEnabled(false);
+
+                }
             }
             catch (Exception ex) {
                 ex.printStackTrace();
-                System.out.println("Error opening socket");
                 System.exit(0);
-            };
-            System.out.println("Start run");
-    // runs forever
-            while (run) {
-                String st = null;
-                try {
-                    if (in.ready()) {   // is there data to be read?
-                        jt.setText("");
-                        jc.setText("");
-                        st = in.readLine(); // reads a line of text: until it gets "\n")
-                        System.out.println("readLine "+st);  // for debugging
-                        if (st.length() < 4) { // short line: it is the player's number
-                            jplayer.setText( st);
-                            NodeGameAB.setPlayer( st);
-                            continue;   // restarts while loop
-                        }
-                        jt.setBackground(Color.yellow); // yellow: it's my turn to make a move
-                        jt.setEnabled(true);
-                        GameMomentumAB initial = new GameMomentumAB( st);
-                        String res = initial.processAB( jc);	// the player's move
-                        jt.setText( res);
-                        System.out.println(initial.toString());	// for debugging
-
-                        String str = jt.getText();
-                        try {
-                            out.write( str+"\n");   // sends the content of the text field to server
-                            out.flush();
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                            System.exit(0);
-                        }
-                        System.out.println("Sent move: "+str);
-                        jt.setBackground(Color.white);	// end of my turn
-                        jt.setEnabled(false);
-
-                    }
-                }
-                catch (Exception ex) {
-                    ex.printStackTrace();
-                    System.exit(0);
-                }
-                try {
-                    Thread.yield();	// suspend to free CPU
-                } catch (Exception e) {};
             }
+            try {
+                Thread.yield();	// suspend to free CPU
+            } catch (Exception e) {};
         }
+    }
 
     public void stop() {
         run = false;
@@ -156,24 +156,24 @@ public class MomentumResponse implements Runnable {
 
     /**
      * Dialog that asks for confirmation to end the program
-     * 
+     *
      * @return int with player's choice
      */
     protected int confirmExit() {
         return JOptionPane.showConfirmDialog(
-            null,
-            " Confirm end of program ? ",
-            " UPT - IA - Momentum ",
-            JOptionPane.OK_CANCEL_OPTION,
-            JOptionPane.WARNING_MESSAGE);
+                null,
+                " Confirm end of program ? ",
+                " UPT - IA - Momentum ",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.WARNING_MESSAGE);
     }
-    
+
     /**
      * @param args
      */
     public static void main(String[] args) {
-         MomentumResponse r = new MomentumResponse();
-         r.begin();
+        MomentumResponse r = new MomentumResponse();
+        r.begin();
 
     }
 

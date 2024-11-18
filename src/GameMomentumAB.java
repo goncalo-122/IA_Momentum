@@ -33,13 +33,43 @@ public class GameMomentumAB extends NodeGameAB {
 
 	public ArrayList<Move> expandAB() {
 		ArrayList<Move> suc = new ArrayList<Move>();
-		// TODO
+		// Generate all possible moves based on the current board state.
+		for (int l = 0; l < 7; l++) {
+			for (int c = 0; c < 7; c++) {
+				// Check if the cell is empty (represented by 0)
+				if (board[l][c] == 0) {
+					// Create a new move
+					int[][] newBoard = makeCopy(board);
+					newBoard[l][c] = myColor; // Place the player's color
+					Move move = new Move("Move to (" + (l + 1) + ", " + (c + 1) + ")", new GameMomentumAB(newBoard, myColor, getDepth() + 1));
+					suc.add(move);
+				}
+			}
+		}
 		return suc;
 	}
 
 	public double getH() {
+		int[][] weights = {
+				{3, 4, 5, 6, 5, 4, 3},
+				{4, 6, 8, 10, 8, 6, 4},
+				{5, 8, 11, 13, 11, 8, 5},
+				{6, 10, 13, 15, 13, 10, 6},
+				{5, 8, 11, 13, 11, 8, 5},
+				{4, 6, 8, 10, 8, 6, 4},
+				{3, 4, 5, 6, 5, 4, 3}
+		};
+
 		double h = 0;
-		// TODO
+
+		for (int l = 0; l < 7; l++) {
+			for (int c = 0; c < 7; c++) {
+				if (board[l][c] == myColor) {
+					h += weights[l][c];
+				}
+			}
+		}
+
 		return h;
 	}
 
@@ -76,5 +106,4 @@ public class GameMomentumAB extends NodeGameAB {
 		for (Move j : suc)
 			System.out.println(j);
 	}
-
 }
