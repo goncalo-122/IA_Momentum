@@ -41,7 +41,7 @@ public class GameMomentumAB extends NodeGameAB {
 					// Create a new move
 					int[][] newBoard = makeCopy(board);
 					newBoard[l][c] = myColor; // Place the player's color
-					Move move = new Move("Move to (" + (l + 1) + ", " + (c + 1) + ")", new GameMomentumAB(newBoard, myColor, getDepth() + 1));
+					Move move = new Move(getPlayer() + " " + (l + 1) + " " + (c + 1) , new GameMomentumAB(newBoard, myColor, getDepth() + 1));
 					suc.add(move);
 				}
 			}
