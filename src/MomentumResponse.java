@@ -1,5 +1,4 @@
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -10,19 +9,17 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 public class MomentumResponse {
 
     private JFrame jf;
     private JPanel jMainPanel;
-    private JTextField jt;
-    private JTextField jplayer;
-    private JTextField jc;
+    private JLabel jt;
+    private JLabel jplayer;
+    private JLabel jc;
 
     private int currentPlayer = 1;
     private int counting = 0;
-
 
     public MomentumResponse() {
         jf = new JFrame("UPT - IA - MomentumAB");
@@ -44,15 +41,15 @@ public class MomentumResponse {
         jMainPanel.add(jnorth, BorderLayout.NORTH);
 
         jnorth.add(new JLabel("Play: "));
-        jt = new JTextField("    ", 24);
+        jt = new JLabel(" ");
         jnorth.add(jt);
 
         jnorth.add(new JLabel("Counting: "));
-        jc = new JTextField("      ", 24);
+        jc = new JLabel(String.valueOf(counting));
         jnorth.add(jc);
 
         jnorth.add(new JLabel("Player: "));
-        jplayer = new JTextField(String.valueOf(currentPlayer), 3);
+        jplayer = new JLabel(String.valueOf(currentPlayer));
         jnorth.add(jplayer);
 
         JPanel jsouth = new JPanel();
@@ -60,11 +57,13 @@ public class MomentumResponse {
         JButton jok = new JButton("  OK  ");
         jsouth.add(jok);
         JButton jend = new JButton("  Exit  ");
-        jsouth.add(jend, BorderLayout.SOUTH);
+        jsouth.add(jend);
 
         jok.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (isValidMove(jt.getText())) {
+                String move = JOptionPane.showInputDialog(jf, "Insira sua jogada (linha,coluna):", "Entrada de Jogada", JOptionPane.PLAIN_MESSAGE);
+                if (move != null && isValidMove(move)) {
+                    jt.setText(move); // Exibe a jogada no JLabel
                     showServerMessage();
                     togglePlayer();
                 }
@@ -81,41 +80,30 @@ public class MomentumResponse {
         });
 
         jf.pack();
-        jf.setVisible(true);
+        jf.setLocationRelativeTo(null); // posicionar janela no centro da tela
     }
-
 
     public void begin() {
-        jc.setEnabled(false);
-        jplayer.setEnabled(false);
+        // Nenhuma necessidade de desativar JLabels
     }
 
-
-
-    /**
-     * Método para exibir a mensagem com os valores inseridos
-     */
     private void showServerMessage() {
-
         String player = jplayer.getText();
         String count = jc.getText();
-        String move = jt.getText();
+        String move = jt.getText().trim();
+
         StringBuilder sb = new StringBuilder();
         sb.append("A seguinte informação será enviada ao servidor:\n");
-        sb.append("Jogador: " + player + "\n");
-        sb.append("Contagem: " + count + "\n");
-        sb.append("Movimento: " + move + "\n");
+        sb.append("Jogador: ").append(player).append("\n");
+        sb.append("Contagem: ").append(count).append("\n");
+        sb.append("Movimento: ").append(move).append("\n");
+
         restart();
 
         System.out.println(sb.toString());
         JOptionPane.showMessageDialog(jf, sb.toString(), "Informações Enviadas", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    /**
-     * Diálogo que pergunta para confirmar o fim do programa
-     *
-     * @return int com a escolha do jogador
-     */
     protected int confirmExit() {
         return JOptionPane.showConfirmDialog(
                 null,
@@ -125,22 +113,18 @@ public class MomentumResponse {
                 JOptionPane.WARNING_MESSAGE);
     }
 
-
     private void restart() {
         jt.setText(" ");
-        jc.setText(" ");
+        counting++;
+        jc.setText(String.valueOf(counting));
     }
 
-
     private void togglePlayer() {
-
         currentPlayer = (currentPlayer == 1) ? 2 : 1;
         jplayer.setText(String.valueOf(currentPlayer));
     }
 
-
     private boolean isValidMove(String move) {
-        // Validar o formato da jogada (ex: "1,1")
         String[] parts = move.split(",");
         if (parts.length != 2) {
             JOptionPane.showMessageDialog(null, "Formato de jogada inválido. Use o formato 'linha,coluna'.", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -151,11 +135,10 @@ public class MomentumResponse {
             int row = Integer.parseInt(parts[0]) - 1;
             int col = Integer.parseInt(parts[1]) - 1;
 
-            if (row < 0 || row >= 7 || col < 0 || col >= 7) {  // Verifica se está dentro dos limites do tabuleiro
+            if (row < 0 || row >= 7 || col < 0 || col >= 7) {
                 JOptionPane.showMessageDialog(null, "Jogada fora dos limites do tabuleiro! O tabuleiro é 7x7.", "Erro", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
-
 
             return true;
         } catch (NumberFormatException e) {
@@ -163,7 +146,6 @@ public class MomentumResponse {
             return false;
         }
     }
-
 
     public static void main(String[] args) {
         MomentumResponse r = new MomentumResponse();
